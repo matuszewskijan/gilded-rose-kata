@@ -1,3 +1,6 @@
+require 'simplecov'
+SimpleCov.start
+
 require_relative '../gilded_rose'
 
 describe GildedRose do
