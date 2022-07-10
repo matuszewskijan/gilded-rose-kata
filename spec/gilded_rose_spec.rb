@@ -53,16 +53,34 @@ describe GildedRose do
       expect(expected_report_lines).to eq(report_lines)
     end
 
+    def expect_product_quality(product:, expected:, sell_in:, quality:)
+      items = [Item.new(product, sell_in, quality)]
+      GildedRose.new(items).update_quality
+      expect(expected).to eq items[0].quality
+    end
+
     context 'when backstage passes' do
-      def expect_backstage_pass_quality(expected:, sell_in:, quality:)
-        items = [Item.new("Backstage passes to a TAFKAL80ETC concert", sell_in, quality)]
-        GildedRose.new(items).update_quality
-        expect(expected).to eq items[0].quality
+      let(:product) { 'Backstage passes to a TAFKAL80ETC concert' }
+
+      context 'when sell in is below 11' do
+        it 'increases item quality by 2' do
+          expect_product_quality(product: product, expected: 22, sell_in: 8, quality: 20)
+        end
       end
 
-      context 'when sell in is positive' do
-        it 'increases item quality' do
-          expect_backstage_pass_quality(expected: 22, sell_in: 8, quality: 20)
+      context 'when sell in is below 6' do
+        it 'increases item quality by 3' do
+          expect_product_quality(product: product, expected: 23, sell_in: 4, quality: 20)
+        end
+      end
+    end
+
+    context 'when aged brie' do
+      let(:product) { 'Aged Brie' }
+
+      context 'when sell in date is over' do
+        it 'increase item quality by 2' do
+          expect_product_quality(product: product, expected: 22, sell_in: 0, quality: 20)
         end
       end
     end
