@@ -4,6 +4,12 @@ SimpleCov.start
 require_relative '../gilded_rose'
 
 describe GildedRose do
+  def expect_product_quality(product:, expected:, sell_in:, quality:)
+    items = [Item.new(product, sell_in, quality)]
+    GildedRose.new(items).update_quality
+    expect(expected).to eq items[0].quality
+  end
+
   describe "#update_quality" do
     it "does not change the name" do
       items = [Item.new("foo", 0, 0)]
@@ -53,10 +59,14 @@ describe GildedRose do
       expect(expected_report_lines).to eq(report_lines)
     end
 
-    def expect_product_quality(product:, expected:, sell_in:, quality:)
-      items = [Item.new(product, sell_in, quality)]
-      GildedRose.new(items).update_quality
-      expect(expected).to eq items[0].quality
+    context 'when generic product' do
+      let(:product) { 'foo' }
+
+      context 'when sell in date is below 0' do
+        it 'decreases item quality by 1' do
+          expect_product_quality(product: product, expected: 18, sell_in: -1, quality: 20)
+        end
+      end
     end
 
     context 'when backstage passes' do
@@ -71,6 +81,12 @@ describe GildedRose do
       context 'when sell in is below 6' do
         it 'increases item quality by 3' do
           expect_product_quality(product: product, expected: 23, sell_in: 4, quality: 20)
+        end
+      end
+
+      context 'when sell in is 0' do
+        it 'decreases item quality to 0' do
+          expect_product_quality(product: product, expected: 0, sell_in: 0, quality: 20)
         end
       end
     end
