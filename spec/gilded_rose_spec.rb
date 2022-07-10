@@ -54,11 +54,15 @@ describe GildedRose do
     end
 
     context 'when backstage passes' do
+      def expect_backstage_pass_quality(expected:, sell_in:, quality:)
+        items = [Item.new("Backstage passes to a TAFKAL80ETC concert", sell_in, quality)]
+        GildedRose.new(items).update_quality
+        expect(expected).to eq items[0].quality
+      end
+
       context 'when sell in is positive' do
         it 'increases item quality' do
-          items = [Item.new("Backstage passes to a TAFKAL80ETC concert", 20, 10)]
-          GildedRose.new(items).update_quality
-          expect(items[0].quality).to eq 11
+          expect_backstage_pass_quality(expected: 22, sell_in: 8, quality: 20)
         end
       end
     end
