@@ -52,5 +52,15 @@ describe GildedRose do
       ]
       expect(expected_report_lines).to eq(report_lines)
     end
+
+    context 'when backstage passes' do
+      context 'when sell in is positive' do
+        it 'increases item quality' do
+          items = [Item.new("Backstage passes to a TAFKAL80ETC concert", 20, 10)]
+          GildedRose.new(items).update_quality
+          expect(items[0].quality).to eq 11
+        end
+      end
+    end
   end
 end
