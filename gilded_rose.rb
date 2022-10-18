@@ -30,7 +30,7 @@ class GildedRose
 
     item.sell_in = item.sell_in - 1
 
-    item.decrease_quality if item.sell_in < 0 && item.quality_less_than_50?
+    item.increase_quality if item.sell_in < 0 && item.quality_less_than_50?
   end
 
   def handle_backstage_pass(item)
