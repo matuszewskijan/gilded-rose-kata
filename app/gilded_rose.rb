@@ -1,18 +1,38 @@
 module Inventory
+  class Quality
+    attr_reader :amount
+
+    def initialize(amount:)
+      @amount = amount
+    end
+
+    def degrade
+      @amount -= 1 if @amount > 0
+    end
+
+    def increase
+      @amount += 1 if @amount < 50
+    end
+
+    def reset
+      @amount = 0
+    end
+  end
+
   class Generic
     attr_accessor :quality, :sell_in
 
     def initialize(quality:, sell_in:)
-      @quality = quality
+      @quality = Quality.new(amount: quality)
       @sell_in = sell_in
     end
 
     def update
-      @quality -= 1 if @quality > 0
+      @quality.degrade
 
       @sell_in = @sell_in - 1
 
-      @quality -= 1 if @sell_in < 0 && @quality > 0
+      @quality.degrade if @sell_in < 0
     end
   end
 
@@ -20,16 +40,16 @@ module Inventory
     attr_accessor :quality, :sell_in
 
     def initialize(quality:, sell_in:)
-      @quality = quality
+      @quality = Quality.new(amount: quality)
       @sell_in = sell_in
     end
 
     def update
-      @quality += 1 if @quality < 50
+      @quality.increase
 
       @sell_in -= 1
 
-      @quality += 1 if @sell_in < 0 && @quality < 50
+      @quality.increase if @sell_in < 0
     end
   end
 
@@ -37,28 +57,19 @@ module Inventory
     attr_accessor :quality, :sell_in
 
     def initialize(quality:, sell_in:)
-      @quality = quality
+      @quality = Quality.new(amount: quality)
       @sell_in = sell_in
     end
 
     def update
-      @quality += 1 if @quality < 50
+      @quality.increase
 
-      if @sell_in < 11
-        if @quality < 50
-          @quality += 1
-        end
-      end
-
-      if @sell_in < 6
-        if @quality < 50
-          @quality += 1
-        end
-      end
+      @quality.increase if @sell_in < 11
+      @quality.increase if @sell_in < 6
 
       @sell_in -= 1
 
-      @quality = @quality - @quality if @sell_in < 0
+      @quality.reset if @sell_in < 0
     end
   end
 
@@ -66,7 +77,7 @@ module Inventory
     attr_accessor :quality, :sell_in
 
     def initialize(quality:, sell_in:)
-      @quality = quality
+      @quality = Quality.new(amount: quality)
       @sell_in = sell_in
     end
 
@@ -116,7 +127,7 @@ class GildedRose
     @items.each do |item|
       good = GoodsCategory.new.build_for(item: item)
       good.update
-      item.quality = good.quality
+      item.quality = good.quality.amount
       item.sell_in = good.sell_in
     end
   end
