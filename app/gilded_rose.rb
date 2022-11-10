@@ -72,7 +72,9 @@ module Inventory
 
     def update; end
   end
+end
 
+class GildedRose
   class GoodsCategory
     def build_for(item:)
       case
@@ -105,16 +107,14 @@ module Inventory
       item.name == "Sulfuras, Hand of Ragnaros"
     end
   end
-end
 
-class GildedRose
   def initialize(items)
     @items = items
   end
 
   def update_quality
     @items.each do |item|
-      good = Inventory::GoodsCategory.new.build_for(item: item)
+      good = GoodsCategory.new.build_for(item: item)
       good.update
       item.quality = good.quality
       item.sell_in = good.sell_in
