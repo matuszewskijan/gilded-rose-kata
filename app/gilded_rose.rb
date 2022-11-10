@@ -72,25 +72,12 @@ module Inventory
       @quality.reset if @sell_in < 0
     end
   end
-
-  class Sulfuras
-    attr_accessor :quality, :sell_in
-
-    def initialize(quality:, sell_in:)
-      @quality = Quality.new(amount: quality)
-      @sell_in = sell_in
-    end
-
-    def update; end
-  end
 end
 
 class GildedRose
   class GoodsCategory
     def build_for(item:)
       case
-      when sulfuras?(item)
-        Inventory::Sulfuras.new(quality: item.quality, sell_in: item.sell_in)
       when generic?(item)
         Inventory::Generic.new(quality: item.quality, sell_in: item.sell_in)
       when aged_brie?(item)
@@ -103,7 +90,7 @@ class GildedRose
     private
 
     def generic?(item)
-      !(aged_brie?(item) || backstage_pass?(item) || sulfuras?(item))
+      !(aged_brie?(item) || backstage_pass?(item))
     end
 
     def aged_brie?(item)
@@ -113,10 +100,6 @@ class GildedRose
     def backstage_pass?(item)
       item.name == "Backstage passes to a TAFKAL80ETC concert"
     end
-
-    def sulfuras?(item)
-      item.name == "Sulfuras, Hand of Ragnaros"
-    end
   end
 
   def initialize(items)
@@ -125,11 +108,19 @@ class GildedRose
 
   def update_quality
     @items.each do |item|
+      next if sulfuras?(item)
+
       good = GoodsCategory.new.build_for(item: item)
       good.update
       item.quality = good.quality.amount
       item.sell_in = good.sell_in
     end
+  end
+
+  private
+
+  def sulfuras?(item)
+    item.name == "Sulfuras, Hand of Ragnaros"
   end
 end
 
