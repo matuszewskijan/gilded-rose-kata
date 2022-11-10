@@ -14,7 +14,7 @@ SimpleCov.start do
   ])
 end
 
-require_relative '../gilded_rose'
+require_relative '../app/gilded_rose'
 
 describe GildedRose do
   def expect_product_quality(product:, expected:, sell_in:, quality:)
@@ -69,6 +69,7 @@ describe GildedRose do
         "Backstage passes to a TAFKAL80ETC concert, 9, 50", "Backstage passes to a TAFKAL80ETC concert, 4, 50",
         "Conjured Mana Cake, 2, 5", ""
       ]
+
       expect(expected_report_lines).to eq(report_lines)
     end
 
