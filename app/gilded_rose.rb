@@ -61,6 +61,17 @@ module Inventory
       @quality = @quality - @quality if @sell_in < 0
     end
   end
+
+  class Sulfuras
+    attr_accessor :quality, :sell_in
+
+    def initialize(quality:, sell_in:)
+      @quality = quality
+      @sell_in = sell_in
+    end
+
+    def update; end
+  end
 end
 
 class GildedRose
@@ -71,6 +82,10 @@ class GildedRose
   def update_quality
     @items.each do |item|
       if item.sulfuras?
+        sulfuras = Inventory::Sulfuras.new(quality: item.quality, sell_in: item.sell_in)
+        sulfuras.update
+        item.quality = sulfuras.quality
+        item.sell_in = sulfuras.sell_in
       elsif item.generic?
         generic = Inventory::Generic.new(quality: item.quality, sell_in: item.sell_in)
         generic.update
