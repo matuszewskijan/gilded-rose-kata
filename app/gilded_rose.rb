@@ -72,6 +72,39 @@ module Inventory
 
     def update; end
   end
+
+  class GoodsCategory
+    def build_for(item:)
+      case
+      when sulfuras?(item)
+        Inventory::Sulfuras.new(quality: item.quality, sell_in: item.sell_in)
+      when generic?(item)
+        Inventory::Generic.new(quality: item.quality, sell_in: item.sell_in)
+      when aged_brie?(item)
+        Inventory::AgedBrie.new(quality: item.quality, sell_in: item.sell_in)
+      when backstage_pass?(item)
+        Inventory::BackstagePass.new(quality: item.quality, sell_in: item.sell_in)
+      end
+    end
+
+    private
+
+    def generic?(item)
+      !(aged_brie?(item) || backstage_pass?(item) || sulfuras?(item))
+    end
+
+    def aged_brie?(item)
+      item.name == "Aged Brie"
+    end
+
+    def backstage_pass?(item)
+      item.name == "Backstage passes to a TAFKAL80ETC concert"
+    end
+
+    def sulfuras?(item)
+      item.name == "Sulfuras, Hand of Ragnaros"
+    end
+  end
 end
 
 class GildedRose
@@ -81,27 +114,10 @@ class GildedRose
 
   def update_quality
     @items.each do |item|
-      if item.sulfuras?
-        sulfuras = Inventory::Sulfuras.new(quality: item.quality, sell_in: item.sell_in)
-        sulfuras.update
-        item.quality = sulfuras.quality
-        item.sell_in = sulfuras.sell_in
-      elsif item.generic?
-        generic = Inventory::Generic.new(quality: item.quality, sell_in: item.sell_in)
-        generic.update
-        item.quality = generic.quality
-        item.sell_in = generic.sell_in
-      elsif item.aged_brie?
-        aged_brie = Inventory::AgedBrie.new(quality: item.quality, sell_in: item.sell_in)
-        aged_brie.update
-        item.quality = aged_brie.quality
-        item.sell_in = aged_brie.sell_in
-      elsif item.backstage_pass?
-        aged_brie = Inventory::BackstagePass.new(quality: item.quality, sell_in: item.sell_in)
-        aged_brie.update
-        item.quality = aged_brie.quality
-        item.sell_in = aged_brie.sell_in
-      end
+      good = Inventory::GoodsCategory.new.build_for(item: item)
+      good.update
+      item.quality = good.quality
+      item.sell_in = good.sell_in
     end
   end
 end
@@ -117,21 +133,5 @@ class Item
 
   def to_s()
     "#{@name}, #{@sell_in}, #{@quality}"
-  end
-
-  def generic?
-    !(aged_brie? || backstage_pass? || sulfuras?)
-  end
-
-  def aged_brie?
-    name == "Aged Brie"
-  end
-
-  def backstage_pass?
-    name == "Backstage passes to a TAFKAL80ETC concert"
-  end
-
-  def sulfuras?
-    name == "Sulfuras, Hand of Ragnaros"
   end
 end
