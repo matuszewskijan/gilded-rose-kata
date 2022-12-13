@@ -7,7 +7,7 @@ module Inventory
     end
 
     def degrade
-      @amount -= 1 if @amount > 0
+      @amount -= 1 if @amount.positive?
     end
 
     def increase
@@ -131,15 +131,15 @@ class GildedRose
     end
 
     def aged_brie?(item)
-      item.name == "Aged Brie"
+      item.name == 'Aged Brie'
     end
 
     def backstage_pass?(item)
-      item.name == "Backstage passes to a TAFKAL80ETC concert"
+      item.name == 'Backstage passes to a TAFKAL80ETC concert'
     end
 
     def conjured?(item)
-      item.name == "Conjured Mana Cake"
+      item.name == 'Conjured Mana Cake'
     end
   end
 
@@ -162,7 +162,7 @@ class GildedRose
   private
 
   def sulfuras?(item)
-    item.name == "Sulfuras, Hand of Ragnaros"
+    item.name == 'Sulfuras, Hand of Ragnaros'
   end
 end
 
