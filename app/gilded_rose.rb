@@ -21,102 +21,54 @@ module Inventory
 
   class Generic
     class Expired
-      attr_accessor :quality
-
-      def initialize(quality:)
-        @quality = Quality.new(amount: quality)
-      end
-
-      def update
-        @quality.degrade
-        @quality.degrade
+      def update(quality:)
+        quality.degrade
+        quality.degrade
       end
     end
 
-    attr_accessor :quality
-
-    def initialize(quality:)
-      @quality = Quality.new(amount: quality)
-    end
-
-    def update
-      @quality.degrade
+    def update(quality:)
+      quality.degrade
     end
   end
 
   class AgedBrie
-    attr_accessor :quality
-
     class Expired
-      attr_accessor :quality
-
-      def initialize(quality:)
-        @quality = Quality.new(amount: quality)
-      end
-
-      def update
-        @quality.increase
-        @quality.increase
+      def update(quality:)
+        quality.increase
+        quality.increase
       end
     end
 
-    def initialize(quality:)
-      @quality = Quality.new(amount: quality)
-    end
-
-    def update
-      @quality.increase
+    def update(quality:)
+      quality.increase
     end
   end
 
   class BackstagePass
     class ConcertIn10Days
-      attr_accessor :quality
-
-      def initialize(quality:)
-        @quality = Quality.new(amount: quality)
-      end
-
-      def update
-        @quality.increase
-        @quality.increase
+      def update(quality:)
+        quality.increase
+        quality.increase
       end
     end
 
     class ConcertIn5Days
-      attr_accessor :quality
-
-      def initialize(quality:)
-        @quality = Quality.new(amount: quality)
-      end
-
-      def update
-        @quality.increase
-        @quality.increase
-        @quality.increase
+      def update(quality:)
+        quality.increase
+        quality.increase
+        quality.increase
       end
     end
 
     class Expired
-      attr_accessor :quality
-
-      def initialize(quality:)
-        @quality = Quality.new(amount: quality)
-      end
-
-      def update
-        @quality.reset
+      def update(quality:)
+        quality.reset
       end
     end
 
-    attr_accessor :quality
-
-    def initialize(quality:)
-      @quality = Quality.new(amount: quality)
-    end
-
-    def update
-      @quality.increase
+    def update(quality:)
+      quality.increase
     end
   end
 end
@@ -127,25 +79,25 @@ class GildedRose
       case
       when generic?(item)
         if item.sell_in.negative?
-          Inventory::Generic::Expired.new(quality: item.quality)
+          Inventory::Generic::Expired.new
         else
-          Inventory::Generic.new(quality: item.quality)
+          Inventory::Generic.new
         end
       when aged_brie?(item)
         if item.sell_in.negative?
-          Inventory::AgedBrie::Expired.new(quality: item.quality)
+          Inventory::AgedBrie::Expired.new
         else
-          Inventory::AgedBrie.new(quality: item.quality)
+          Inventory::AgedBrie.new
         end
       when backstage_pass?(item)
         if item.sell_in.negative?
-          Inventory::BackstagePass::Expired.new(quality: item.quality)
+          Inventory::BackstagePass::Expired.new
         elsif item.sell_in < 5
-          Inventory::BackstagePass::ConcertIn5Days.new(quality: item.quality)
+          Inventory::BackstagePass::ConcertIn5Days.new
         elsif item.sell_in < 10
-          Inventory::BackstagePass::ConcertIn10Days.new(quality: item.quality)
+          Inventory::BackstagePass::ConcertIn10Days.new
         else
-          Inventory::BackstagePass.new(quality: item.quality)
+          Inventory::BackstagePass.new
         end
       end
     end
@@ -174,9 +126,10 @@ class GildedRose
       next if sulfuras?(item)
 
       item.sell_in -= 1
+      quality = Inventory::Quality.new(amount: item.quality)
       good = GoodsCategory.new.build_for(item: item)
-      good.update
-      item.quality = good.quality.amount
+      good.update(quality: quality)
+      item.quality = quality.amount
     end
   end
 
