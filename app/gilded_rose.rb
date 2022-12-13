@@ -36,14 +36,25 @@ module Inventory
   class AgedBrie
     attr_accessor :quality
 
+    class Expired
+      attr_accessor :quality
+
+      def initialize(quality:)
+        @quality = Quality.new(amount: quality)
+      end
+
+      def update(sell_in: nil)
+        @quality.increase
+        @quality.increase
+      end
+    end
+
     def initialize(quality:)
       @quality = Quality.new(amount: quality)
     end
 
-    def update(sell_in:)
+    def update(sell_in: nil)
       @quality.increase
-
-      @quality.increase if sell_in < 0
     end
   end
 
@@ -72,7 +83,11 @@ class GildedRose
       when generic?(item)
         Inventory::Generic.new(quality: item.quality)
       when aged_brie?(item)
-        Inventory::AgedBrie.new(quality: item.quality)
+        if item.sell_in.negative?
+          Inventory::AgedBrie::Expired.new(quality: item.quality)
+        else
+          Inventory::AgedBrie.new(quality: item.quality)
+        end
       when backstage_pass?(item)
         Inventory::BackstagePass.new(quality: item.quality)
       end
