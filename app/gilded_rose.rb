@@ -59,19 +59,53 @@ module Inventory
   end
 
   class BackstagePass
+    class ConcertIn10Days
+      attr_accessor :quality
+
+      def initialize(quality:)
+        @quality = Quality.new(amount: quality)
+      end
+
+      def update(sell_in: nil)
+        @quality.increase
+        @quality.increase
+      end
+    end
+
+    class ConcertIn5Days
+      attr_accessor :quality
+
+      def initialize(quality:)
+        @quality = Quality.new(amount: quality)
+      end
+
+      def update(sell_in: nil)
+        @quality.increase
+        @quality.increase
+        @quality.increase
+      end
+    end
+
+    class Expired
+      attr_accessor :quality
+
+      def initialize(quality:)
+        @quality = Quality.new(amount: quality)
+      end
+
+      def update(sell_in: nil)
+        @quality.reset
+      end
+    end
+
     attr_accessor :quality
 
     def initialize(quality:)
       @quality = Quality.new(amount: quality)
     end
 
-    def update(sell_in:)
+    def update(sell_in: nil)
       @quality.increase
-
-      @quality.increase if sell_in < 10
-      @quality.increase if sell_in < 5
-
-      @quality.reset if sell_in < 0
     end
   end
 end
@@ -89,7 +123,15 @@ class GildedRose
           Inventory::AgedBrie.new(quality: item.quality)
         end
       when backstage_pass?(item)
-        Inventory::BackstagePass.new(quality: item.quality)
+        if item.sell_in.negative?
+          Inventory::BackstagePass::Expired.new(quality: item.quality)
+        elsif item.sell_in < 5
+          Inventory::BackstagePass::ConcertIn5Days.new(quality: item.quality)
+        elsif item.sell_in < 10
+          Inventory::BackstagePass::ConcertIn10Days.new(quality: item.quality)
+        else
+          Inventory::BackstagePass.new(quality: item.quality)
+        end
       end
     end
 
