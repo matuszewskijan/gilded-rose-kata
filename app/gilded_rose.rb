@@ -27,7 +27,7 @@ module Inventory
         @quality = Quality.new(amount: quality)
       end
 
-      def update(sell_in: nil)
+      def update
         @quality.degrade
         @quality.degrade
       end
@@ -39,7 +39,7 @@ module Inventory
       @quality = Quality.new(amount: quality)
     end
 
-    def update(sell_in:)
+    def update
       @quality.degrade
     end
   end
@@ -54,7 +54,7 @@ module Inventory
         @quality = Quality.new(amount: quality)
       end
 
-      def update(sell_in: nil)
+      def update
         @quality.increase
         @quality.increase
       end
@@ -64,7 +64,7 @@ module Inventory
       @quality = Quality.new(amount: quality)
     end
 
-    def update(sell_in: nil)
+    def update
       @quality.increase
     end
   end
@@ -77,7 +77,7 @@ module Inventory
         @quality = Quality.new(amount: quality)
       end
 
-      def update(sell_in: nil)
+      def update
         @quality.increase
         @quality.increase
       end
@@ -90,7 +90,7 @@ module Inventory
         @quality = Quality.new(amount: quality)
       end
 
-      def update(sell_in: nil)
+      def update
         @quality.increase
         @quality.increase
         @quality.increase
@@ -104,7 +104,7 @@ module Inventory
         @quality = Quality.new(amount: quality)
       end
 
-      def update(sell_in: nil)
+      def update
         @quality.reset
       end
     end
@@ -115,7 +115,7 @@ module Inventory
       @quality = Quality.new(amount: quality)
     end
 
-    def update(sell_in: nil)
+    def update
       @quality.increase
     end
   end
@@ -175,7 +175,7 @@ class GildedRose
 
       item.sell_in -= 1
       good = GoodsCategory.new.build_for(item: item)
-      good.update(sell_in: item.sell_in)
+      good.update
       item.quality = good.quality.amount
     end
   end
