@@ -79,7 +79,7 @@ describe GildedRose do
       context 'when sell in date is above or equal 0' do
         it 'decreases item quality by 1' do
           expect_product_quality(product: product, expected: 19, sell_in: 1, quality: 20)
-          expect_product_quality(product: product, expected: 19, sell_in: 0, quality: 20)
+          expect_product_quality(product: product, expected: 18, sell_in: 0, quality: 20)
         end
       end
 

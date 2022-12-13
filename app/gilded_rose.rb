@@ -27,10 +27,10 @@ module Inventory
       @sell_in = sell_in
     end
 
-    def update
+    def update(sell_in:)
       @quality.degrade
 
-      @quality.degrade if @sell_in < -1
+      @quality.degrade if sell_in < 0
     end
   end
 
@@ -42,12 +42,10 @@ module Inventory
       @sell_in = sell_in
     end
 
-    def update
+    def update(sell_in:)
       @quality.increase
 
-      @sell_in -= 1
-
-      @quality.increase if @sell_in <= -2
+      @quality.increase if sell_in < 0
     end
   end
 
@@ -59,15 +57,13 @@ module Inventory
       @sell_in = sell_in
     end
 
-    def update
+    def update(sell_in:)
       @quality.increase
 
-      @quality.increase if @sell_in < 10
-      @quality.increase if @sell_in < 5
+      @quality.increase if sell_in < 10
+      @quality.increase if sell_in < 5
 
-      @sell_in -= 1
-
-      @quality.reset if @sell_in < -1
+      @quality.reset if sell_in < 0
     end
   end
 end
@@ -110,7 +106,7 @@ class GildedRose
 
       item.sell_in -= 1
       good = GoodsCategory.new.build_for(item: item)
-      good.update
+      good.update(sell_in: item.sell_in)
       item.quality = good.quality.amount
     end
   end
