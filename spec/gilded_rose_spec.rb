@@ -76,8 +76,15 @@ describe GildedRose do
     context 'when generic product' do
       let(:product) { 'foo' }
 
-      context 'when sell in date is below 0' do
+      context 'when sell in date is above or equal 0' do
         it 'decreases item quality by 1' do
+          expect_product_quality(product: product, expected: 19, sell_in: 1, quality: 20)
+          expect_product_quality(product: product, expected: 19, sell_in: 0, quality: 20)
+        end
+      end
+
+      context 'when sell in date is below 0' do
+        it 'decreases item quality by 2' do
           expect_product_quality(product: product, expected: 18, sell_in: -1, quality: 20)
         end
       end
@@ -89,12 +96,14 @@ describe GildedRose do
       context 'when sell in is below 11' do
         it 'increases item quality by 2' do
           expect_product_quality(product: product, expected: 22, sell_in: 8, quality: 20)
+          expect_product_quality(product: product, expected: 22, sell_in: 6, quality: 20)
         end
       end
 
       context 'when sell in is below 6' do
         it 'increases item quality by 3' do
-          expect_product_quality(product: product, expected: 23, sell_in: 4, quality: 20)
+          expect_product_quality(product: product, expected: 23, sell_in: 5, quality: 20)
+          expect_product_quality(product: product, expected: 23, sell_in: 1, quality: 20)
         end
       end
 
@@ -108,9 +117,16 @@ describe GildedRose do
     context 'when aged brie' do
       let(:product) { 'Aged Brie' }
 
+      context 'when sell in date is not over' do
+        it 'increase item quality by 2' do
+          expect_product_quality(product: product, expected: 21, sell_in: 1, quality: 20)
+          expect_product_quality(product: product, expected: 22, sell_in: 0, quality: 20)
+        end
+      end
+
       context 'when sell in date is over' do
         it 'increase item quality by 2' do
-          expect_product_quality(product: product, expected: 22, sell_in: 0, quality: 20)
+          expect_product_quality(product: product, expected: 22, sell_in: -1, quality: 20)
         end
       end
     end
