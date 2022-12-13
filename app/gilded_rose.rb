@@ -32,6 +32,22 @@ module Inventory
     end
   end
 
+  class Conjured
+    class Expired
+      def update(quality:)
+        quality.degrade
+        quality.degrade
+        quality.degrade
+        quality.degrade
+      end
+    end
+
+    def update(quality:)
+      quality.degrade
+      quality.degrade
+    end
+  end
+
   class AgedBrie
     class Expired
       def update(quality:)
@@ -99,13 +115,19 @@ class GildedRose
         else
           Inventory::BackstagePass.new
         end
+      when conjured?(item)
+        if item.sell_in.negative?
+          Inventory::Conjured::Expired.new
+        else
+          Inventory::Conjured.new
+        end
       end
     end
 
     private
 
     def generic?(item)
-      !(aged_brie?(item) || backstage_pass?(item))
+      !(aged_brie?(item) || backstage_pass?(item) || conjured?(item))
     end
 
     def aged_brie?(item)
@@ -114,6 +136,10 @@ class GildedRose
 
     def backstage_pass?(item)
       item.name == "Backstage passes to a TAFKAL80ETC concert"
+    end
+
+    def conjured?(item)
+      item.name == "Conjured Mana Cake"
     end
   end
 

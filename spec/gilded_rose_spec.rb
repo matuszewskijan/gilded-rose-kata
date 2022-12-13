@@ -67,7 +67,7 @@ describe GildedRose do
         "Aged Brie, 1, 1", "Elixir of the Mongoose, 4, 6", "Sulfuras, Hand of Ragnaros, 0, 80",
         "Sulfuras, Hand of Ragnaros, -1, 80", "Backstage passes to a TAFKAL80ETC concert, 14, 21",
         "Backstage passes to a TAFKAL80ETC concert, 9, 50", "Backstage passes to a TAFKAL80ETC concert, 4, 50",
-        "Conjured Mana Cake, 2, 5", ""
+        "Conjured Mana Cake, 2, 4", ""
       ]
 
       expect(expected_report_lines).to eq(report_lines)
@@ -127,6 +127,22 @@ describe GildedRose do
       context 'when sell in date is over' do
         it 'increase item quality by 2' do
           expect_product_quality(product: product, expected: 22, sell_in: -1, quality: 20)
+        end
+      end
+    end
+
+    context 'when conjured' do
+      let(:product) { 'Conjured Mana Cake' }
+
+      context 'when sell in date is above or equal 0' do
+        it 'decreases item quality by 2' do
+          expect_product_quality(product: product, expected: 18, sell_in: 1, quality: 20)
+        end
+      end
+
+      context 'when sell in date is below 0' do
+        it 'decreases item quality by 4' do
+          expect_product_quality(product: product, expected: 16, sell_in: 0, quality: 20)
         end
       end
     end
