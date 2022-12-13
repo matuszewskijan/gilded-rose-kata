@@ -20,6 +20,19 @@ module Inventory
   end
 
   class Generic
+    class Expired
+      attr_accessor :quality
+
+      def initialize(quality:)
+        @quality = Quality.new(amount: quality)
+      end
+
+      def update(sell_in: nil)
+        @quality.degrade
+        @quality.degrade
+      end
+    end
+
     attr_accessor :quality
 
     def initialize(quality:)
@@ -28,8 +41,6 @@ module Inventory
 
     def update(sell_in:)
       @quality.degrade
-
-      @quality.degrade if sell_in < 0
     end
   end
 
@@ -115,7 +126,11 @@ class GildedRose
     def build_for(item:)
       case
       when generic?(item)
-        Inventory::Generic.new(quality: item.quality)
+        if item.sell_in.negative?
+          Inventory::Generic::Expired.new(quality: item.quality)
+        else
+          Inventory::Generic.new(quality: item.quality)
+        end
       when aged_brie?(item)
         if item.sell_in.negative?
           Inventory::AgedBrie::Expired.new(quality: item.quality)
