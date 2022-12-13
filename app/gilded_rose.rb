@@ -20,11 +20,10 @@ module Inventory
   end
 
   class Generic
-    attr_accessor :quality, :sell_in
+    attr_accessor :quality
 
-    def initialize(quality:, sell_in:)
+    def initialize(quality:)
       @quality = Quality.new(amount: quality)
-      @sell_in = sell_in
     end
 
     def update(sell_in:)
@@ -35,11 +34,10 @@ module Inventory
   end
 
   class AgedBrie
-    attr_accessor :quality, :sell_in
+    attr_accessor :quality
 
-    def initialize(quality:, sell_in:)
+    def initialize(quality:)
       @quality = Quality.new(amount: quality)
-      @sell_in = sell_in
     end
 
     def update(sell_in:)
@@ -50,11 +48,10 @@ module Inventory
   end
 
   class BackstagePass
-    attr_accessor :quality, :sell_in
+    attr_accessor :quality
 
-    def initialize(quality:, sell_in:)
+    def initialize(quality:)
       @quality = Quality.new(amount: quality)
-      @sell_in = sell_in
     end
 
     def update(sell_in:)
@@ -73,11 +70,11 @@ class GildedRose
     def build_for(item:)
       case
       when generic?(item)
-        Inventory::Generic.new(quality: item.quality, sell_in: item.sell_in)
+        Inventory::Generic.new(quality: item.quality)
       when aged_brie?(item)
-        Inventory::AgedBrie.new(quality: item.quality, sell_in: item.sell_in)
+        Inventory::AgedBrie.new(quality: item.quality)
       when backstage_pass?(item)
-        Inventory::BackstagePass.new(quality: item.quality, sell_in: item.sell_in)
+        Inventory::BackstagePass.new(quality: item.quality)
       end
     end
 
